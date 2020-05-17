@@ -35,7 +35,7 @@ public class RegistrationController {
         return modelAndView;
     }
 
-
+    // todo errors handling
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView registerUser(
             @Valid @ModelAttribute(value = "user") UserDTO userDTO,
@@ -53,9 +53,8 @@ public class RegistrationController {
         } catch (IOException e) {
             LOGGER.error(e);
             modelAndView.setViewName("redirect:/registration");
-            modelAndView.setStatus(HttpStatus.BAD_REQUEST); // todo handle error
+            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
         }
-
         return modelAndView;
     }
 }

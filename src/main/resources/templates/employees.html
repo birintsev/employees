@@ -41,7 +41,7 @@
                 <a
                    th:href="@{/employees(page=${pageNumber}, size=${pageSize})}"
                    th:text="${pageNumber + 1}"
-                   th:class="${pageNumber == currentPage} ? currentPageNumber"></a>
+                   th:class="${pageNumber == currentPage} ? currentPageNumber"></a> <!--todo format pagination-->
             </div>
         </div>
     </div>

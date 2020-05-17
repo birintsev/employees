@@ -69,6 +69,10 @@ public class EmployeesApplication extends WebSecurityConfigurerAdapter implement
         });
     }
 
+    // todo fix errors on startup: stacktrace:
+    //org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL "alter table emp add constraint FKfehivfm7m674r8qrrnug1of2q foreign key (mgr) references emp" via JDBC Statement
+    //...
+    //Caused by: oracle.jdbc.OracleDatabaseException: ORA-02275: такое ссылочное ограничение уже есть в таблице
     public static void main(String[] args) {
         SpringApplication.run(EmployeesApplication.class, args);
     }

@@ -19,7 +19,6 @@ import java.util.stream.IntStream;
 public class EmployeesViewController {
     private final EmployeesPagingRepository employeesPagingRepository;
 
-    // todo format pagination
     @RequestMapping(method = RequestMethod.GET, path = "/employees", params = {"page", "size"})
     public ModelAndView showAllEmployees(ModelAndView modelAndView, Pageable pageable) {
         Page<Employee> employeesPage = employeesPagingRepository.findAll(pageable);
