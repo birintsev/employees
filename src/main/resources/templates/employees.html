@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/static/styles/employees_styles.css}">
+</head>
+<body>
+    <div id="header">
+        <div class="navBarContainer">
+            <div id="navBar">
+                <div class="navBarItem centeredText" id="empsMenuItem">Employees</div>
+                <div class="navBarItem centeredText" id="deptsMenuItem">Departments</div>
+                <div class="navBarItem centeredText" id="accMenuItem">Account</div>
+            </div>
+        </div>
+    </div>
+    <div id="main" class="flexContainer">
+        <div id="empPageContainer">
+            <div class="employeeCard" th:each="emp : ${employeesPage.content}">
+                <div class="imageContainer"><img class="avatar" th:src="@{/img/avatar.png}" alt="Employee photo (dummy)"></div>
+                <div class="infoContainer">
+                    <p>Employee id: <span th:text="${emp.empno}"></span></p>
+                    <p>Name: <span th:text="${emp.ename}"></span></p>
+                    <p>Job: <span th:text="${emp.job}"></span></p>
+                    <p th:if="${emp.mgr} != null">Manager id: <span th:text="${emp.mgr.empno}"></span></p>
+                    <p>Hiredate: <span th:text="${{emp.hiredate}}"></span></p>
+                    <p>Salary: <span th:text="${emp.sal}"></span></p>
+                    <p th:if="${emp.comm != null}">Commissions: <span th:text="${emp.comm}"></span></p>
+                    <p th:if="${emp.dept} != null">Department id: <span th:text="${emp.dept.deptno}"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <div id="pagination">
+            <div th:each="pageNumber : ${pagesNumbers}" class="pageUrlContainer">
+                <a
+                   th:href="@{/employees(page=${pageNumber}, size=${pageSize})}"
+                   th:text="${pageNumber + 1}"
+                   th:class="${pageNumber == currentPage} ? currentPageNumber"></a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

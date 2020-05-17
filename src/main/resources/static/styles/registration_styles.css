@@ -1,0 +1,61 @@
+@import url("https://fonts.google.com/specimen/Ubuntu");
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Ubuntu, sans-serif;
+    font-size: 16px;
+    color: black;
+    text-decoration: none;
+    /*border: 2px black solid;*/ /*TODO delete*/
+}
+
+html {
+    background-image: url("/img/background.png") /*no-repeat center center fixed*/;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+#main {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%;
+    height: 55%;
+}
+
+.flexContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /*todo fix bug: not always centered flexItems*/
+}
+
+.flexItem {
+    margin-right: 1%;
+}
+
+.flexItem > * {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.verticalForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 300px;
+    height: 100%;
+}
+
+.verticalForm > * {
+    margin: 5% auto;
+}
+
+input {
+    height: 35px;
+    background-color: transparent;
+    outline: none;
+}
