@@ -17,7 +17,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class AuthorityID implements Serializable {
     @ManyToOne
-    @JoinColumn(name = "USERNAME", referencedColumnName = "USERNAME")
+    @JoinColumn(name = "USERNAME")
     private User user;
     @Column(length = 50, nullable = false)
     private String authority;

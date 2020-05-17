@@ -14,8 +14,11 @@ import javax.persistence.*;
 @EqualsAndHashCode
 @Entity(name = "Authority")
 @Table(
-        name = "AUTHORITIES",
-        uniqueConstraints = {@UniqueConstraint(name = "AUTH_USERNAME", columnNames = {"USERNAME", "AUTHORITY"})})
+    name = "AUTHORITIES",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "AUTH_USERNAME", columnNames = {"USERNAME", "AUTHORITY"})
+    }
+)
 public class Authority implements GrantedAuthority {
     @EmbeddedId
     private AuthorityID authorityID;

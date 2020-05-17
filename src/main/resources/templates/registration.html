@@ -15,7 +15,7 @@
             <img th:src="@{/img/registration.png}" alt="Registration image">
         </div>
         <div id="formContainer" class="flexItem">
-            <form id="registrationForm" class="verticalForm" action="/" th:object="${user}" method="POST">
+            <form id="registrationForm" class="verticalForm" th:action="@{/registration}" th:object="${user}" method="POST">
                 <div>
                     <span>Welcome</span>
                 </div>

@@ -1,9 +1,6 @@
 package ua.edu.sumdu.employees.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +17,8 @@ import java.util.Set;
 @ToString
 @Entity(name = "User")
 @Table(name = "USERS")
+@Getter
+@Setter
 public class User implements UserDetails {
     @Id
     @Column(columnDefinition = "VARCHAR2(50 CHAR)")
@@ -28,8 +27,7 @@ public class User implements UserDetails {
     private String password;
     @Column(nullable = false)
     private Boolean enabled;
-    @OneToMany(mappedBy = "authorityID.user", fetch = FetchType.EAGER)
-    @Fetch(FetchMode.SUBSELECT)
+    @OneToMany(mappedBy = "authorityID.user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Authority> authorities;
 
     @Override

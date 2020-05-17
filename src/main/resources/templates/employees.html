@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/static/styles/employees_styles.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/styles/employees_styles.css}">
 </head>
 <body>
     <div id="header">
@@ -20,7 +20,7 @@
     </div>
     <div id="main" class="flexContainer">
         <div id="empPageContainer">
-            <div class="employeeCard" th:each="emp : ${employeesPage.content}">
+            <div class="employeeCard" th:each="emp : ${employeesPage.getContent()}">
                 <div class="imageContainer"><img class="avatar" th:src="@{/img/avatar.png}" alt="Employee photo (dummy)"></div>
                 <div class="infoContainer">
                     <p>Employee id: <span th:text="${emp.empno}"></span></p>

@@ -1,7 +1,6 @@
 package ua.edu.sumdu.employees.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,6 +8,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.format.Formatter;
@@ -21,16 +21,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import ua.edu.sumdu.employees.model.Authority;
-import ua.edu.sumdu.employees.model.AuthorityID;
-import ua.edu.sumdu.employees.model.DefaultAuthorities;
-import ua.edu.sumdu.employees.model.User;
+import ua.edu.sumdu.employees.model.*;
 import ua.edu.sumdu.employees.repository.AuthorityRepository;
 import ua.edu.sumdu.employees.repository.UserDetailsRepository;
 
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 
 @EnableCaching
 @SpringBootApplication(scanBasePackages = "ua.edu.sumdu.employees")
@@ -41,8 +39,23 @@ import java.util.Locale;
 @EnableSpringDataWebSupport
 public class EmployeesApplication extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
+    @Autowired
+    public void addFormatters(
+            FormatterRegistry registry,
+            PasswordEncoder passwordEncoder,
+            @Value("${employees.defaults.user.isactive}") Boolean isActive,
+            @Value("${employees.defaults.user.defaultauthority}") String defaultAuthority) {
+        registry.addConverter(UserDTO.class, User.class, source -> {
+            User user = new User(source.getUsername(), passwordEncoder.encode(source.getPassword()), Optional.ofNullable(isActive).orElse(true), new HashSet<>());
+            Authority authority = new Authority(new AuthorityID());
+            authority.setUser(user);
+            authority.setAuthority(
+                    Optional.ofNullable(defaultAuthority).orElse(DefaultAuthorities.RO_USER.getAuthority())
+            );
+            user.addAuthority(authority);
+            return user;
+        });
+
         registry.addFormatterForFieldType(Date.class, new Formatter<Date>() {
             @Override
             public Date parse(String text, Locale locale) {
@@ -110,20 +123,11 @@ public class EmployeesApplication extends WebSecurityConfigurerAdapter implement
 
     @Autowired
     public void configureGlobal(
-            AuthenticationManagerBuilder builder
-            /*, DataSource dataSource*/,
-            @Qualifier("UserDetailsService") UserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder/*,
-            AuthenticationProvider authenticationProvider*/) throws Exception {
+            AuthenticationManagerBuilder builder,
+            UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) throws Exception {
         builder
-                /*.authenticationProvider(authenticationProvider)*/
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
-        /*builder
-            .jdbcAuthentication()
-            .dataSource(dataSource)
-            .withUser("Administrator")
-            .password("Administrator")
-            .roles(DefaultAuthorities.ADMINISTRATOR.toString());*/
+            .userDetailsService(userDetailsService)
+            .passwordEncoder(passwordEncoder);
     }
 }
