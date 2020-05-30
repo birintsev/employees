@@ -1,7 +1,8 @@
-package ua.edu.sumdu.employees.model;
+package ua.edu.sumdu.employees.model.dto;
 
 import lombok.*;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -21,4 +22,7 @@ public class UserDTO {
     @NotNull
     @NotEmpty
     private String confirmPassword;
+    @NotNull
+    @Email
+    private String email;
 }

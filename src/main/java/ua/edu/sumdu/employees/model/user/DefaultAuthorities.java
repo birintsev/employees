@@ -1,4 +1,4 @@
-package ua.edu.sumdu.employees.model;
+package ua.edu.sumdu.employees.model.user;
 
 import org.springframework.security.core.GrantedAuthority;
 

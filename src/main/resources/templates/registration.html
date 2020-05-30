@@ -12,8 +12,8 @@
     <div id="header"></div>
     <div id="main" class="flexContainer">
         <div id="imageContainer" class="flexItem">
-            <img th:src="@{/img/registration.png}" alt="Registration image">
-        </div>
+            <img th:src="@{/img/registration.png}" alt="Registration image"> <!--TODO shining back from image-->
+        </div>                                                               <!--TODO floating image-->
         <div id="formContainer" class="flexItem">
             <form id="registrationForm" class="verticalForm" th:action="@{/registration}" th:object="${user}" method="POST">
                 <div>

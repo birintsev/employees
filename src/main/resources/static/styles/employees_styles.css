@@ -11,6 +11,8 @@
 
 body {
     background-color: #aea3d1;
+    /*background: rgb(84,62,159);
+    background: radial-gradient(circle, rgba(84,62,159,1) 45%, rgba(174,163,209,1) 100%);*/
 }
 
 .centeredText {

@@ -26,7 +26,10 @@ public class EmployeesViewController {
         int totalPagesCount = employeesPage.getTotalPages();
         modelAndView.getModelMap().addAttribute("pageSize", employeesPage.getSize());
         modelAndView.getModelMap().addAttribute("totalPagesCount", totalPagesCount);
-        modelAndView.getModelMap().addAttribute("pagesNumbers", IntStream.rangeClosed(0, totalPagesCount - 1).boxed().collect(Collectors.toList()));
+        modelAndView.getModelMap().addAttribute(
+            "pagesNumbers",
+            IntStream.rangeClosed(0, totalPagesCount - 1).boxed().collect(Collectors.toList())
+        );
         modelAndView.getModelMap().addAttribute("currentPage", employeesPage.getNumber());
         modelAndView.getModelMap().addAttribute("employeesPage", employeesPage);
         modelAndView.setViewName("employees");
@@ -36,5 +39,11 @@ public class EmployeesViewController {
     @RequestMapping(method = RequestMethod.GET, path = "/employees", params = {"!page", "!size"})
     public RedirectView redirectWithParameters() {
         return new RedirectView("/employees?page=0&size=5");
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/")
+    public ModelAndView defaultPage(ModelAndView modelAndView) { // todo move default mapping method to another controller
+        modelAndView.setViewName("redirect:/employees");
+        return modelAndView;
     }
 }

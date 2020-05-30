@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import ua.edu.sumdu.employees.model.User;
-import ua.edu.sumdu.employees.model.UserDTO;
-import ua.edu.sumdu.employees.service.UserDetailsService;
+import ua.edu.sumdu.employees.model.dto.UserDTO;
+import ua.edu.sumdu.employees.model.user.User;
+import ua.edu.sumdu.employees.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -23,7 +23,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class RegistrationController {
     private static final Logger LOGGER = Logger.getLogger(RegistrationController.class);
-    private final UserDetailsService userDetailsService;
+    private final UserService userService;
     private final ConversionService conversionService;
 
     @Cacheable("images")
@@ -44,7 +44,7 @@ public class RegistrationController {
         ModelAndView modelAndView = new ModelAndView();
         try {
             if (!errors.hasErrors()) {
-                userDetailsService.registerNewUser(conversionService.convert(userDTO, User.class));
+                userService.registerNewUser(conversionService.convert(userDTO, User.class)); // todo move types conversion to the service layer
                 modelAndView.setStatus(HttpStatus.OK);
                 modelAndView.setViewName("redirect:/employees"); // todo (1) notify about successful registration (2) auto login ? after successfully completed registration
             } else {

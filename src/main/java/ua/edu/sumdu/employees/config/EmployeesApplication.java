@@ -1,14 +1,15 @@
 package ua.edu.sumdu.employees.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.format.Formatter;
@@ -21,7 +22,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import ua.edu.sumdu.employees.model.*;
+import ua.edu.sumdu.employees.model.dto.UserDTO;
+import ua.edu.sumdu.employees.model.user.Authority;
+import ua.edu.sumdu.employees.model.user.DefaultAuthorities;
+import ua.edu.sumdu.employees.model.user.User;
 import ua.edu.sumdu.employees.repository.AuthorityRepository;
 import ua.edu.sumdu.employees.repository.UserDetailsRepository;
 
@@ -37,17 +41,19 @@ import java.util.Optional;
 @Configuration
 @EnableWebSecurity
 @EnableSpringDataWebSupport
+@EnableConfigurationProperties(value = EmployeesProperties.class)
 public class EmployeesApplication extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     @Autowired
     public void addFormatters(
-            FormatterRegistry registry,
-            PasswordEncoder passwordEncoder,
-            @Value("${employees.defaults.user.isactive}") Boolean isActive,
-            @Value("${employees.defaults.user.defaultauthority}") String defaultAuthority) {
+        FormatterRegistry registry,
+        PasswordEncoder passwordEncoder,
+        @Value("${employees.defaultsUserIsActive}") Boolean isActive,
+        @Value("${employees.defaultsUserDefaultAuthority}") String defaultAuthority) {
+
         registry.addConverter(UserDTO.class, User.class, source -> {
-            User user = new User(source.getUsername(), passwordEncoder.encode(source.getPassword()), Optional.ofNullable(isActive).orElse(true), new HashSet<>());
-            Authority authority = new Authority(new AuthorityID());
+            User user = new User(source.getUsername(), passwordEncoder.encode(source.getPassword()), Optional.ofNullable(isActive).orElse(true), new HashSet<>(), source.getEmail());
+            Authority authority = new Authority(new Authority.AuthorityID());
             authority.setUser(user);
             authority.setAuthority(
                     Optional.ofNullable(defaultAuthority).orElse(DefaultAuthorities.RO_USER.getAuthority())
@@ -78,7 +84,7 @@ public class EmployeesApplication extends WebSecurityConfigurerAdapter implement
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception { // todo permit resetPassword and newPassword for not authenticated users
         http
             .authorizeRequests()
                 .antMatchers("/employees")
@@ -106,13 +112,15 @@ public class EmployeesApplication extends WebSecurityConfigurerAdapter implement
     // default admin account creation
     @Autowired
     public void createDefaultUser(
-            @Value(value = "${employees.root.username}") String password,
-            @Value(value = "${employees.root.password}") String username,
-            /*@Qualifier(value = "UserDetailsService")*/ UserDetailsRepository userDetailsRepository,
-            AuthorityRepository authorityRepository,
-            PasswordEncoder passwordEncoder) {
-        User user = new User(username, passwordEncoder.encode(password), true, new HashSet<>());
-        Authority authority = new Authority(new AuthorityID());
+        @Value(value = "${employees.rootUsername}") String password,
+        @Value(value = "${employees.rootPassword}") String username,
+        @Value(value = "${employees.rootEmail}") String email,
+        UserDetailsRepository userDetailsRepository,
+        AuthorityRepository authorityRepository,
+        PasswordEncoder passwordEncoder) {
+
+        User user = new User(username, passwordEncoder.encode(password), true, new HashSet<>(), email);
+        Authority authority = new Authority(new Authority.AuthorityID());
 
         authority.setUser(user);
         authority.setAuthority(DefaultAuthorities.ADMINISTRATOR.getAuthority());
@@ -127,9 +135,11 @@ public class EmployeesApplication extends WebSecurityConfigurerAdapter implement
 
     @Autowired
     public void configureGlobal(
-            AuthenticationManagerBuilder builder,
-            UserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder) throws Exception {
+        AuthenticationManagerBuilder builder,
+        @Qualifier("UserService") UserDetailsService userDetailsService,
+        PasswordEncoder passwordEncoder
+    ) throws Exception {
+
         builder
             .userDetailsService(userDetailsService)
             .passwordEncoder(passwordEncoder);

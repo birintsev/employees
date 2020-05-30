@@ -1,13 +1,11 @@
-package ua.edu.sumdu.employees.model;
+package ua.edu.sumdu.employees.model.user;
 
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.Collection;
 import java.util.Set;
 
@@ -19,6 +17,7 @@ import java.util.Set;
 @Table(name = "USERS")
 @Getter
 @Setter
+@Embeddable
 public class User implements UserDetails {
     @Id
     @Column(columnDefinition = "VARCHAR2(50 CHAR)")
@@ -29,6 +28,9 @@ public class User implements UserDetails {
     private Boolean enabled;
     @OneToMany(mappedBy = "authorityID.user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Authority> authorities;
+    @Column(nullable = false, unique = true)
+    @Email
+    private String email;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
